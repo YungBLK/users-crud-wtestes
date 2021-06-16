@@ -17,7 +17,7 @@ import { PropsInterface } from "./types";
 
 // state
 const initialState = {
-	name: "",
+	firstName: "",
 	lastName: "",
 	email: "",
 };
@@ -26,6 +26,9 @@ const initialState = {
 const UsersCrudForm = (props: PropsInterface) => {
 	// states
 	const [form, setForm] = useState(initialState);
+
+	// hooks
+	const addUser = useAddUser();
 
 	// effects
 	const { errors, hasErrors } = useValidation(form, FormValidations) as any;
@@ -36,10 +39,12 @@ const UsersCrudForm = (props: PropsInterface) => {
 	);
 
 	const handleSubmit = useCallback((event, type, formValues) => {
+		console.log("formValues", formValues, "type", type);
 		event.preventDefault();
-		// type === "register" ? useAddUser(formValues) : EditUser(formValues);
+		type === "register" ? addUser(formValues) : EditUser(formValues);
 		setForm(initialState);
-	}, [])
+		props.closeModal();
+	}, [addUser, props])
 
 	return (
 		<>
@@ -49,15 +54,15 @@ const UsersCrudForm = (props: PropsInterface) => {
 			>
 				<div className="form-group">
 					<Input
-						value={form.name}
-						placeholder="Nome"
+						value={form.firstName}
+						placeholder="Ex.: Carlos."
 						name="name"
-						onChange={(e: any) => setInput({ name: e.target.value })}
+						onChange={(e: any) => setInput({ firstName: e.target.value })}
 						label="Nome"
-						error={errors.name}
+						error={errors.firstName}
 					/>
 					<Input
-						placeholder="Sobrenome"
+						placeholder="Ex.: Alberto."
 						value={form.lastName}
 						name="lastName"
 						onChange={(e: any) => setInput({ lastName: e.target.value })}
@@ -65,7 +70,7 @@ const UsersCrudForm = (props: PropsInterface) => {
 						error={errors.lastName}
 					/>
 					<Input
-						placeholder="E-mail"
+						placeholder="Ex.: email@email.com"
 						value={form.email}
 						name="email"
 						onChange={(e: any) => setInput({ email: e.target.value })}
@@ -76,7 +81,7 @@ const UsersCrudForm = (props: PropsInterface) => {
 				<div className={styles.center}>
 					<button
 						type="submit"
-						className={hasErrors && `${styles.disabled}`}
+						className={hasErrors ? `btn ${styles.disabled}` : `btn btn-primary`}
 						disabled={hasErrors}
 					>
 						Salvar

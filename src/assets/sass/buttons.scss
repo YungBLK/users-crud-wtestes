@@ -26,3 +26,11 @@
 	color: var(--color-white);
 	background-color: var(--color-primary-400);
 }
+.btn-disabled {
+	background-color: inherit;
+	&:hover {
+		background-color: var(--color-grey-100);
+		opacity: 1;
+		background-color: gray;
+	}
+}

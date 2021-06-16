@@ -21,12 +21,14 @@ import {
 	CREATE_USER_FAILED,
 	DELETE_USER_SUCCESS,
 	DELETE_USER_FAILED,
+	UserOnCreate,
 	User,
 } from "./types";
 
 // url
 const url = "/users";
 const urlDeleteUser = "/users";
+const urlCreateUser = "/users";
 
 export function fetchUsersSuccess(users: User[]): UsersActionTypes {
 	return {
@@ -168,50 +170,43 @@ export const fetchUsers = (): AppThunk => async (dispatch) => {
 //     });
 // }
 
-// export const createUser = (newUser: UserOnCreate): AppThunk => async (dispatch) => {
-//   dispatch(addSystemPending());
+export const createUser = (newUser: UserOnCreate): AppThunk => async (dispatch) => {
 
-//   return client
-//     .post(urlCreateUser, newUser)
-//     .then((response) => {
-//       const data = response.data;
+  return client
+    .post(urlCreateUser, newUser)
+    .then((response) => {
+      const data = response.data;
 
-//       if(data){
-//         Toast({
-//           position: 'top-end',
-//           timer: 5000,
-//           icon: 'success',
-//           message: 'Usuário criado com sucesso.'
-//         });
+      if(data){
+        Toast({
+          position: 'top-end',
+          timer: 5000,
+          icon: 'success',
+          message: 'Usuário criado com sucesso.'
+        });
 
-//         dispatch(createUserSuccess());
-//         dispatch(fetchUsers({ sortParam: "created_at",
-//         sortOrder: "desc",
-//         currentPage: 1,
-//         filters: ""}, 12));
-//       }
+        dispatch(createUserSuccess());
+        dispatch(fetchUsers());
+      }
+    })
+    .catch((err) => {
+      Toast({
+        position: 'top-end',
+        timer: 5000,
+        icon: 'error',
+        message: err.response ?
+        err.response.data.message :
+        `Ocorreu um problema ao criar o usuário, tente novamente`,
+      });
+        dispatch(createUserFailed(
+          err.response ?
+          err.response.data.message :
+          'Ocorreu um problema ao criar o usuário, tente novamente',
+        ))
 
-//       dispatch(removeSystemPending());
-//     })
-//     .catch((err) => {
-//       Toast({
-//         position: 'top-end',
-//         timer: 5000,
-//         icon: 'error',
-//         message: err.response ?
-//         err.response.data.message :
-//         `Ocorreu um problema ao criar o usuário, tente novamente`,
-//       });
-//         dispatch(createUserFailed(
-//           err.response ?
-//           err.response.data.message :
-//           'Ocorreu um problema ao criar o usuário, tente novamente',
-//         ))
-
-//       dispatch(removeSystemPending());
-//       useHandleError(err)
-//     });
-// };
+      useHandleError(err)
+    });
+};
 
 export const deleteUser = (id: number): AppThunk => async () => {
   return client

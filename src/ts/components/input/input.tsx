@@ -7,8 +7,8 @@ const Input = ({ error, label, touch = false, ...rest }: any) => {
 
   return (
     <>
-		<label htmlFor={rest.name}>{label}</label>
-		<input className="form-control" {...rest} onBlur={() => setTouched(true)} />
+		<label className={styles.labelText} htmlFor={rest.name}>{label}</label>
+		<input className={`form-control ${styles.input_default}`} {...rest} onBlur={() => setTouched(true)} />
 		<span className={styles.text_danger}>{(touched || touch) && error}</span>
     </>
   )

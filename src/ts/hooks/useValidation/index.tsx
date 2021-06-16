@@ -4,7 +4,7 @@ import getValidatorErrors from 'ts/utils/getValidationError';
 import { ValidationError } from "yup";
 
 interface Errors {
-	name: "";
+	firstName: "";
 	lastName: "";
 	email: "";
 }
@@ -25,7 +25,7 @@ const useValidation = (values: any, schema: any) => {
    }, [schema, values])
 
    useEffect(() =>
-   		setHasErrors(!!errors.email || !!errors.lastName || !!errors.name),
+   		setHasErrors(!!errors.email || !!errors.lastName || !!errors.firstName),
    [errors])
 
 

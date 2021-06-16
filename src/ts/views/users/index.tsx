@@ -76,7 +76,7 @@ const Users = () => {
 				</div>
 
 				<Modal show={open} handleClose={handleClose}>
-					<UsersCrudForm type={modalType}/>
+					<UsersCrudForm type={modalType} closeModal={handleClose}/>
 				</Modal>
 			</main>
 		</div>

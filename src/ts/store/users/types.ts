@@ -96,10 +96,9 @@ export interface UserOnChangeName {
 	userAttributes: Field[];
 }
 export interface UserOnCreate {
-	username: string;
-	name: string;
-	transporterId?: string;
-	userType: string;
+	firstName: string;
+	lastName: string;
+	email: string;
 }
 
 export interface UserOnUpdateForm {

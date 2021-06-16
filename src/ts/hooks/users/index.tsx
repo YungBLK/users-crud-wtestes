@@ -33,7 +33,25 @@ export const useRetrieveUsers = () => {
 	return list;
 };
 
-export const useAddUser = (user: any) => {};
+export const useAddUser = () => {
+    // -------------------------------------------------
+    // Callbacks
+    // -------------------------------------------------
+
+    // hooks
+    const dispatch = useDispatch();
+
+
+    const addUserFunction = React.useCallback((data: types.UserOnCreate) => {
+
+      dispatch(actions.createUser(data));
+
+      return true;
+    }, [dispatch]);
+
+
+    return addUserFunction;
+};
 
 export const useRemoveUser = () => {
     // -------------------------------------------------
