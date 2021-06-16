@@ -20,6 +20,7 @@ const Users = () => {
 
 	// states
 	const [open, setOpen] = useState(false);
+	const [selected, setSelected] = useState<any>({});
 	const [modalType, setModalType] = useState<string>("");
 
 	// effects
@@ -28,9 +29,10 @@ const Users = () => {
 	}, []);
 
 
-	const openModal = useCallback((type: string) => {
+	const openModal = useCallback((type: string, selectedItem?: any) => {
 		setModalType(type);
 		setOpen(true);
+		setSelected(selectedItem);
 	}, []);
 
 
@@ -55,15 +57,16 @@ const Users = () => {
 						<button className="btn" onClick={() => removeUser(cell.row.original.id)}>
 							<FiXSquare />
 						</button>
-						<button className="btn" onClick={() => openModal("edit")}>
+						<button className="btn" onClick={() => openModal("edit", cell.row.original)}>
 							<FiEdit2 />
 						</button>
 					</div>
 				)
 			},
 		],
-		[openModal]
+		[openModal, removeUser]
 	);
+
 	return (
 		<div className="container">
 			<main>
@@ -76,7 +79,7 @@ const Users = () => {
 				</div>
 
 				<Modal show={open} handleClose={handleClose}>
-					<UsersCrudForm type={modalType} closeModal={handleClose}/>
+					<UsersCrudForm type={modalType} closeModal={handleClose} selectedItem={selected}/>
 				</Modal>
 			</main>
 		</div>

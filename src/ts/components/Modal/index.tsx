@@ -1,7 +1,12 @@
 // packages
 import React from "react";
+
 // styles
 import styles from "./style.module.scss";
+
+// parts
+import { FiX } from 'react-icons/fi';
+
 
 const Modal = ({ handleClose, show, children }: any) => {
 	const showHideClassName = show
@@ -17,7 +22,7 @@ const Modal = ({ handleClose, show, children }: any) => {
 						className={styles.close_button}
 						onClick={handleClose}
 					>
-						X
+						<FiX />
 					</button>
 				</div>
 

@@ -1,5 +1,5 @@
 // packages
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 // parts
 import Input from "ts/components/input/input";
@@ -10,7 +10,7 @@ import styles from "../../../../style.module.scss";
 
 // hooks
 import useValidation from "ts/hooks/useValidation";
-import { useAddUser, EditUser } from "../../../hooks/users";
+import { useAddUser, useEditUser } from "../../../hooks/users";
 
 // types
 import { PropsInterface } from "./types";
@@ -22,42 +22,55 @@ const initialState = {
 	email: "",
 };
 
-
 const UsersCrudForm = (props: PropsInterface) => {
 	// states
 	const [form, setForm] = useState(initialState);
-
+	const [editing, setEditing] = useState<boolean>(false);
 	// hooks
 	const addUser = useAddUser();
+	const editUser = useEditUser();
 
 	// effects
 	const { errors, hasErrors } = useValidation(form, FormValidations) as any;
 
 	const setInput = useCallback(
-		(newValue: any) => setForm((value: any) => ({ ...value, ...newValue })),
+		(newValue: any) => {
+			setEditing(true);
+			setForm((value: any) => ({ ...value, ...newValue }));
+		},
 		[setForm]
 	);
 
-	const handleSubmit = useCallback((event, type, formValues) => {
-		console.log("formValues", formValues, "type", type);
-		event.preventDefault();
-		type === "register" ? addUser(formValues) : EditUser(formValues);
-		setForm(initialState);
-		props.closeModal();
-	}, [addUser, props])
+	useEffect(() => {
+		if (props.type === "edit" && !editing) 
+			setForm(props.selectedItem);
+	}, [setForm, editing, props]);
+
+	const handleSubmit = useCallback(
+		(event, type, formValues) => {
+			event.preventDefault();
+			type === "register" ? addUser(formValues) : editUser(formValues, props.selectedItem.id);
+			props.closeModal();	
+		},
+		[addUser, props, editUser]
+	);
 
 	return (
 		<>
-			<h3>Cadastro de usuário</h3>
-			<form
-				onSubmit={(event) => handleSubmit(event, props.type, form)}
-			>
+			<h3>
+				{props.type === "register"
+					? "Cadastro de usuário"
+					: "Atualização de usuário"}
+			</h3>
+			<form onSubmit={(event) => handleSubmit(event, props.type, form)}>
 				<div className="form-group">
 					<Input
 						value={form.firstName}
 						placeholder="Ex.: Carlos."
 						name="name"
-						onChange={(e: any) => setInput({ firstName: e.target.value })}
+						onChange={(e: any) =>
+							setInput({ firstName: e.target.value })
+						}
 						label="Nome"
 						error={errors.firstName}
 					/>
@@ -65,7 +78,9 @@ const UsersCrudForm = (props: PropsInterface) => {
 						placeholder="Ex.: Alberto."
 						value={form.lastName}
 						name="lastName"
-						onChange={(e: any) => setInput({ lastName: e.target.value })}
+						onChange={(e: any) =>
+							setInput({ lastName: e.target.value })
+						}
 						label="Sobrenome"
 						error={errors.lastName}
 					/>
@@ -73,7 +88,9 @@ const UsersCrudForm = (props: PropsInterface) => {
 						placeholder="Ex.: email@email.com"
 						value={form.email}
 						name="email"
-						onChange={(e: any) => setInput({ email: e.target.value })}
+						onChange={(e: any) =>
+							setInput({ email: e.target.value })
+						}
 						label="E-mail"
 						error={errors.email}
 					/>
@@ -81,7 +98,9 @@ const UsersCrudForm = (props: PropsInterface) => {
 				<div className={styles.center}>
 					<button
 						type="submit"
-						className={hasErrors ? `btn ${styles.disabled}` : `btn btn-primary`}
+						className={
+							hasErrors ? `btn btn-disabled` : `btn btn-primary`
+						}
 						disabled={hasErrors}
 					>
 						Salvar

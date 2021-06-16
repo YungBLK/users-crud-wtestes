@@ -73,4 +73,22 @@ export const useRemoveUser = () => {
     return removeUserFunction;
 };
 
-export const EditUser = (user: any) => {};
+export const useEditUser = () => {
+  // -------------------------------------------------
+  // Callbacks
+  // -------------------------------------------------
+
+  // hooks
+  const dispatch = useDispatch();
+
+
+  const editUserFunction = React.useCallback((data: types.UserOnUpdateReq, id: number) => {
+
+    dispatch(actions.updateUser(data, id));
+
+    return true;
+  }, [dispatch]);
+
+
+  return editUserFunction;
+};

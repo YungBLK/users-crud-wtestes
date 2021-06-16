@@ -22,6 +22,7 @@ import {
 	DELETE_USER_SUCCESS,
 	DELETE_USER_FAILED,
 	UserOnCreate,
+	UserOnUpdateReq,
 	User,
 } from "./types";
 
@@ -29,6 +30,7 @@ import {
 const url = "/users";
 const urlDeleteUser = "/users";
 const urlCreateUser = "/users";
+const urlUpdateUser = "/users";
 
 export function fetchUsersSuccess(users: User[]): UsersActionTypes {
 	return {
@@ -126,49 +128,41 @@ export const fetchUsers = (): AppThunk => async (dispatch) => {
 		});
 };
 
-// export const updateUser = (user: UserOnUpdateReq): AppThunk => async(dispatch) => {
-//   dispatch(addSystemPending());
+ export const updateUser = (user: any, id: number): AppThunk => async(dispatch) => {
+   return client
+     .put(`${urlUpdateUser}/${id}`, user)
+     .then((response) => {
+       const data = response.data;
 
-//   return client
-//     .put(urlUpdateUser, user)
-//     .then((response) => {
-//       const data = response.data.message;
+       if(data){
+         Toast({
+           position: 'top-end',
+           timer: 5000,
+           icon: 'success',
+           message: 'Usuário atualizado com sucesso.'
+         });
 
-//       if(data){
-//         Toast({
-//           position: 'top-end',
-//           timer: 5000,
-//           icon: 'success',
-//           message: 'Usuário atualizado com sucesso.'
-//         });
-
-//           dispatch(fetchUsers({  sortParam: "created_at",
-//           sortOrder: "desc",
-//           currentPage: 1,
-//           filters: ""}, 12));
-//           dispatch(editUserSuccess());
-//       }
-
-//       dispatch(removeSystemPending());
-//     })
-//     .catch((err) => {
-//       Toast({
-//         position: 'top-end',
-//         timer: 5000,
-//         icon: 'error',
-//         message: err.response ?
-//         err.response.data.message :
-//         `Ocorreu um problema ao atualizar o usuário, tente novamente`,
-//       });
-//         dispatch(editUserFailed(
-//           err.response ?
-//           err.response.data.message :
-//           'Ocorreu um problema ao atualizar nome, tente novamente',
-//         ))
-//       dispatch(removeSystemPending());
-//       useHandleError(err)
-//     });
-// }
+           dispatch(fetchUsers());
+           dispatch(editUserSuccess());
+       }
+     })
+     .catch((err) => {
+       Toast({
+         position: 'top-end',
+         timer: 5000,
+         icon: 'error',
+         message: err.response ?
+         err.response.data.message :
+         `Ocorreu um problema ao atualizar o usuário, tente novamente`,
+       });
+         dispatch(editUserFailed(
+           err.response ?
+           err.response.data.message :
+           'Ocorreu um problema ao atualizar nome, tente novamente',
+         ))
+       useHandleError(err)
+     });
+ }
 
 export const createUser = (newUser: UserOnCreate): AppThunk => async (dispatch) => {
 
@@ -208,31 +202,31 @@ export const createUser = (newUser: UserOnCreate): AppThunk => async (dispatch) 
     });
 };
 
-export const deleteUser = (id: number): AppThunk => async () => {
+export const deleteUser = (id: number): AppThunk => async (dispatch) => {
   return client
     .delete(`${urlDeleteUser}/${id}` )
     .then((response) => {
-      const data = response.data;
+      const data = response.status;
 
-      if(data){
-        Toast({
+      if(data === 200){
+		dispatch(fetchUsers());
+		Toast({
           position: 'top-end',
           timer: 5000,
           icon: 'success',
-          message: 'Usuário desativado com sucesso.'
+          message: 'Usuário removido com sucesso.'
         });
       }
     })
     .catch((err) => {
       const { message } = err.response;
-      console.log(err.response);
       Toast({
         position: 'top-end',
         timer: 5000,
         icon: 'error',
         message: message ?
         message :
-        `Ocorreu um problema ao desativar o usuário, tente novamente`,
+        `Ocorreu um problema ao remover o usuário, tente novamente`,
       });
 
       useHandleError(err)
