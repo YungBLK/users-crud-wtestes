@@ -22,6 +22,7 @@ const initialState = {
 	email: "",
 };
 
+
 const UsersCrudForm = (props: PropsInterface) => {
 	// states
 	const [form, setForm] = useState(initialState);
@@ -72,7 +73,6 @@ const UsersCrudForm = (props: PropsInterface) => {
 						error={errors.email}
 					/>
 				</div>
-
 				<div className={styles.center}>
 					<button
 						type="submit"

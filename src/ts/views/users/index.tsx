@@ -27,6 +27,7 @@ const Users = () => {
 		setOpen(false);
 	}, []);
 
+
 	const openModal = useCallback((type: string) => {
 		setModalType(type);
 		setOpen(true);
